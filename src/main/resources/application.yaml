@@ -4,5 +4,9 @@ spring:
     output:
         ansi:
             enabled: always
+server:
+    port: 8081
 bot:
     token: 6612365421:AAGrRVc3hb6zrwO4RFBAo16HBIXwizqL2uU
+openai:
+    token: sk-HS0QGDZkOUIGZggeWyDZHjr6elvXNWGK
