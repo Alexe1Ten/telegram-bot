@@ -1,0 +1,8 @@
+spring:
+    application:
+        name: telegram-bot
+    output:
+        ansi:
+            enabled: always
+bot:
+    token: 6612365421:AAGrRVc3hb6zrwO4RFBAo16HBIXwizqL2uU
