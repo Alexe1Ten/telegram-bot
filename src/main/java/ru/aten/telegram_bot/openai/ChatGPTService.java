@@ -1,13 +1,11 @@
 package ru.aten.telegram_bot.openai;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import ru.aten.telegram_bot.openai.api.ChatCompletionRequest;
-import ru.aten.telegram_bot.openai.api.ChatGptHistory;
+import ru.aten.telegram_bot.openai.api.ChatGptHistoryService;
 import ru.aten.telegram_bot.openai.api.Message;
 import ru.aten.telegram_bot.openai.api.OpenAiClient;
 
@@ -16,7 +14,7 @@ import ru.aten.telegram_bot.openai.api.OpenAiClient;
 public class ChatGPTService {
 
     private final OpenAiClient openAiClient;
-    private final ChatGptHistory chatGptHistory;
+    private final ChatGptHistoryService chatGptHistory;
 
     @Nonnull
     public String getResponseChatForUser(
@@ -26,11 +24,11 @@ public class ChatGPTService {
         chatGptHistory.createHistoryIfNotExist(userId);
 
         var history = chatGptHistory.addMessageToHistory(
-            userId,
-            Message.builder()
-                .content(userTextInput)
-                .role("user")
-                .build()
+                userId,
+                Message.builder()
+                        .content(userTextInput)
+                        .role("user")
+                        .build()
         );
 
         var request = ChatCompletionRequest.builder()

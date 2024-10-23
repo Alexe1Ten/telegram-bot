@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class ChatGptHistory {
+public class ChatGptHistoryService {
 
     private final Map<Long, ChatHistory> chatHistoryMap = new ConcurrentHashMap<>();
 
@@ -25,6 +25,10 @@ public class ChatGptHistory {
             Long userid
     ) {
         chatHistoryMap.put(userid, new ChatHistory(new ArrayList<>()));
+    }
+
+    public void clearHistory(Long userid) {
+        chatHistoryMap.remove(userid);
     }
 
     public ChatHistory addMessageToHistory(
