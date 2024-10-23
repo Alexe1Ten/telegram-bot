@@ -1,52 +1,65 @@
 package ru.aten.telegram_bot.openai.api;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
+import ru.aten.telegram_bot.dto.ChatHistoryDTO;
+import ru.aten.telegram_bot.dto.MessageDTO;
+import ru.aten.telegram_bot.model.ChatHistory;
+import ru.aten.telegram_bot.model.Message;
+import ru.aten.telegram_bot.repository.ChatHistoryRepository;
 
 @Service
 @AllArgsConstructor
 public class ChatGptHistoryService {
 
-    private final Map<Long, ChatHistory> chatHistoryMap = new ConcurrentHashMap<>();
+    private final ChatHistoryRepository chatHistoryRepository;
+    private final ChatHistoryMapper chatHistoryMapper;
 
-    public Optional<ChatHistory> getUserHistory(
-            Long userid
-    ) {
-        return Optional.ofNullable(chatHistoryMap.get(userid));
+    @Transactional(readOnly=true)
+    public Optional<ChatHistoryDTO> getUserHistory(Long userid) {
+        return chatHistoryRepository.findByUserId(userid)
+            .map(chatHistoryMapper::toDTO);
     }
 
+    @Transactional
     public void createHistory(
             Long userid
     ) {
-        chatHistoryMap.put(userid, new ChatHistory(new ArrayList<>()));
+        var chatHistory = ChatHistory.builder()
+            .userId(userid)
+            .messages(new ArrayList<>())
+            .build();
+        chatHistoryRepository.save(chatHistory);
     }
 
+    @Transactional
     public void clearHistory(Long userid) {
-        chatHistoryMap.remove(userid);
+        chatHistoryRepository.findByUserId(userid)
+            .ifPresent(chatHistoryRepository::delete);
     }
 
-    public ChatHistory addMessageToHistory(
+    @Transactional
+    public ChatHistoryDTO addMessageToHistory(
             Long userid,
-            Message message
+            MessageDTO messageDTO
     ) {
-        var chatHistory = chatHistoryMap.get(userid);
-        if (chatHistory == null) {
-            throw new IllegalStateException("History not found for user id: " + userid);
-        }
+        ChatHistory chatHistory = chatHistoryRepository.findByUserId(userid)
+            .orElseThrow(() -> new IllegalStateException("History not found for user id: " + userid));
 
-        chatHistory.chatMessages().add(message);
+        Message message = chatHistoryMapper.toEntity(messageDTO);
+        chatHistory.getMessages().add(message);
+        chatHistoryRepository.save(chatHistory);
 
-        return chatHistory;
+        return chatHistoryMapper.toDTO(chatHistory);
     }
 
     public void createHistoryIfNotExist(Long userId) {
-        if (!chatHistoryMap.containsKey(userId)) {
+        if (!chatHistoryRepository.findByUserId(userId).isPresent()) {
             createHistory(userId);
         }
     }

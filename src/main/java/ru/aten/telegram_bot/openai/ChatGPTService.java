@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
+import ru.aten.telegram_bot.dto.MessageDTO;
 import ru.aten.telegram_bot.openai.api.ChatCompletionRequest;
 import ru.aten.telegram_bot.openai.api.ChatGptHistoryService;
-import ru.aten.telegram_bot.openai.api.Message;
 import ru.aten.telegram_bot.openai.api.OpenAiClient;
 
 @Service
@@ -14,34 +14,35 @@ import ru.aten.telegram_bot.openai.api.OpenAiClient;
 public class ChatGPTService {
 
     private final OpenAiClient openAiClient;
-    private final ChatGptHistoryService chatGptHistory;
+    private final ChatGptHistoryService chatGptHistoryService;
 
     @Nonnull
     public String getResponseChatForUser(
             Long userId,
-            String userTextInput
-    ) {
-        chatGptHistory.createHistoryIfNotExist(userId);
+            String userTextInput) {
+        chatGptHistoryService.createHistoryIfNotExist(userId);
 
-        var history = chatGptHistory.addMessageToHistory(
+        MessageDTO userMessageDTO = new MessageDTO();
+        userMessageDTO.setContent(userTextInput);
+        userMessageDTO.setRole("user");
+
+        var historyDTO = chatGptHistoryService.addMessageToHistory(
                 userId,
-                Message.builder()
-                        .content(userTextInput)
-                        .role("user")
-                        .build()
+                userMessageDTO
         );
 
         var request = ChatCompletionRequest.builder()
                 .model("gpt-4o")
-                .messages(history.chatMessages())
+                .messages(historyDTO.getMessages())
                 .build();
 
         var response = openAiClient.createChatCompletion(request);
 
         var messageFromGpt = response.choices().get(0).message();
+        
 
-        chatGptHistory.addMessageToHistory(userId, messageFromGpt);
+        chatGptHistoryService.addMessageToHistory(userId, messageFromGpt);
 
-        return messageFromGpt.content();
+        return messageFromGpt.getContent();
     }
 }

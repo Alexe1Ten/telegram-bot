@@ -1,6 +1,19 @@
 spring:
     application:
         name: telegram-bot
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+        open-in-view: false
+        properties:
+            hibernate:
+                '[format_sql]': true
+    datasource:
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/telegram_bot
+        username: root
+        password: Granit.1084
+        driver-class-name: com.mysql.cj.jdbc.Driver
     output:
         ansi:
             enabled: always
