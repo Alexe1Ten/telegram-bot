@@ -1,4 +1,4 @@
-package ru.aten.telegram_bot;
+package ru.aten.telegram_bot.telegram;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
