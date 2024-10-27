@@ -3,7 +3,7 @@ package ru.aten.telegram_bot.command.handler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import ru.aten.telegram_bot.command.TelegramCommandHandler;
 import ru.aten.telegram_bot.command.TelegramCommands;
@@ -19,15 +19,15 @@ public class StartCommandHandler implements TelegramCommandHandler {
             """;
 
     @Override
-    public BotApiMethod<?> processCommand(Update update) {
+    public BotApiMethod<?> processCommand(Message message) {
         // Получаем пользователя, который отправил сообщение
-        var user = update.getMessage().getFrom();
+        var user = message.getFrom();
 
         // Используем firstName пользователя (если доступно) или альтернативный текст
         String userName = (user != null) ? user.getFirstName() : "пользователь";
 
         return SendMessage.builder()
-                .chatId(update.getMessage().getChatId())
+                .chatId(message.getChatId())
                 .text(HELLO_MESSAGE.formatted(userName))
                 .build();
     }
