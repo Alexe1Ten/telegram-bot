@@ -28,8 +28,13 @@ public class TelegramUpdateMessageHandler {
             return telegramCommandDispatcher.processCommand(message);
         }
         var chatId = message.getChatId().toString();
-        if (message.hasText() && telegramTextHandler.isBotMentioned(message)
-                || message.hasVoice() && telegramVoiceHandler.isBotVoiceCommand(message)) {
+        boolean isPrivateChat = message.getChat().isUserChat();
+        boolean isGroupChat = message.getChat().isGroupChat() || message.getChat().isSuperGroupChat();
+
+        boolean isMentionedText = message.hasText() && (isPrivateChat || (isGroupChat && telegramTextHandler.isBotMentioned(message)));
+        boolean isMentionedVoice = message.hasVoice() && (isPrivateChat || (isGroupChat && telegramVoiceHandler.isBotVoiceCommand(message)));
+
+        if (isMentionedText || isMentionedVoice) {
             telegramAsyncMessageSendler.sendMessageAsync(
                     chatId,
                     () -> {

@@ -21,9 +21,10 @@ public class TelegramTextHandler {
         var userId = message.getFrom().getId();
         var userName = message.getFrom().getFirstName();
 
-        var gptGeneratedText = "[" + "*" + userName + "*" + "](tg://user?id=" + userId + "), " + chatGPTService.getResponseChatForUser(message.getChatId(), message.getText());
+        var gptGeneratedText = chatGPTService.getResponseChatForUser(message.getChatId(), message.getText());
         String escapedText = TextConverter.escapeMarkdownV2(gptGeneratedText);
-        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), escapedText);
+        String messageText = String.format("[%s](tg://user?id=%d), %s", "*" + userName + "*", userId, escapedText);
+        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), messageText);
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.enableMarkdownV2(true);
         sendMessage.setMessageThreadId(message.getMessageThreadId());
