@@ -28,7 +28,7 @@ public class TelegramVoiceHandler {
         var transcribeText = getTranscribeText(fileId);
         var gptGeneratedText = getGeneratedGptText(message, transcribeText);
 
-        String escapedText = TelegramTextHandler.escapeMarkdownV2(gptGeneratedText);
+        String escapedText = TextConverter.escapeMarkdownV2(gptGeneratedText);
 
         String messageText = String.format("[%s](tg://user?id=%d), %s", "*" + userName + "*", userId, escapedText);
 

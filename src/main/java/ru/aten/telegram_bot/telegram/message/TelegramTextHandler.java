@@ -22,7 +22,7 @@ public class TelegramTextHandler {
         var userName = message.getFrom().getFirstName();
 
         var gptGeneratedText = "[" + "*" + userName + "*" + "](tg://user?id=" + userId + "), " + chatGPTService.getResponseChatForUser(message.getChatId(), message.getText());
-        String escapedText = escapeMarkdownV2(gptGeneratedText);
+        String escapedText = TextConverter.escapeMarkdownV2(gptGeneratedText);
         SendMessage sendMessage = new SendMessage(message.getChatId().toString(), escapedText);
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.enableMarkdownV2(true);
@@ -34,26 +34,6 @@ public class TelegramTextHandler {
         }
 
         return sendMessage;
-    }
-
-    public static String escapeMarkdownV2(String text) {
-        return text
-                .replace("(", "\\(")
-                .replace(")", "\\)")
-                .replace("#", "")
-                .replace("+", "\\+")
-                .replace("-", "\\-")
-                .replace("=", "\\=")
-                .replace("|", "\\|")
-                .replace("{", "\\{")
-                .replace("}", "\\}")
-                .replace(".", "\\.")
-                .replace("<", "\\<")
-                .replace(">", "\\>")
-                .replace("!", "\\!")
-                .replace("'", "\\'")
-                .replace("[", "\\[")
-                .replace("]", "\\]");
     }
 
     public boolean isBotMentioned(Message message) {
