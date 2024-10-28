@@ -22,13 +22,21 @@ public class TelegramVoiceHandler {
     private final ChatGPTService chatGPTService;
 
     public SendMessage processVoice(Message message) throws MalformedURLException, TelegramApiException {
+        var userId = message.getFrom().getId();
+        var userName = message.getFrom().getFirstName();
         var fileId = message.getVoice().getFileId();
         var transcribeText = getTranscribeText(fileId);
         var gptGeneratedText = getGeneratedGptText(message, transcribeText);
+
         String escapedText = TelegramTextHandler.escapeMarkdownV2(gptGeneratedText);
-        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), escapedText);
+
+        String messageText = String.format("[%s](tg://user?id=%d), %s", "*" + userName + "*", userId, escapedText);
+
+        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), messageText);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setParseMode("MarkdownV2");
+        sendMessage.enableMarkdownV2(true);
+
+        System.out.println("Отправляемое сообщение: " + messageText);
 
         if (message.getMessageThreadId() != null) {
             sendMessage.setMessageThreadId(message.getMessageThreadId());
@@ -38,7 +46,9 @@ public class TelegramVoiceHandler {
     }
 
     private String getGeneratedGptText(Message message, String text) throws TelegramApiException, MalformedURLException {
-        var gptGeneratedText = "@" + message.getFrom().getFirstName() + " " + chatGPTService.getResponseChatForUser(message.getChatId(), text);
+        // var userId = message.getFrom().getId();
+        // var userName = message.getFrom().getFirstName();
+        var gptGeneratedText = chatGPTService.getResponseChatForUser(message.getChatId(), text);
         return gptGeneratedText;
     }
 

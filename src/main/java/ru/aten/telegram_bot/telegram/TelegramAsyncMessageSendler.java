@@ -41,7 +41,9 @@ public class TelegramAsyncMessageSendler {
                 .text("Ваш запрос принят в обработку, ожидайте")
                 .chatId(chatId)
                 .messageThreadId(messageThreadId)
+                .parseMode("MarkdownV2")
                 .build());
+            
 
         CompletableFuture.supplyAsync(action, executorService)
                 .exceptionally(onErrorHandler)
@@ -49,6 +51,7 @@ public class TelegramAsyncMessageSendler {
                     try {
                         defaultAbsSender.execute(EditMessageText.builder()
                                     .chatId(chatId)
+                                    .parseMode("MarkdownV2")
                                     .messageId(message.getMessageId())
                                     .text(sendMessage.getText())
                             .build());
