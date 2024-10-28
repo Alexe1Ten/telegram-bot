@@ -1,8 +1,6 @@
 package ru.aten.telegram_bot.telegram.message;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -40,22 +38,22 @@ public class TelegramTextHandler {
 
     public static String escapeMarkdownV2(String text) {
         return text
-                .replace("(", "\\(") // Экранируем открывающую круглую скобку
-                .replace(")", "\\)") // Экранируем закрывающую круглую скобку
-                .replace("#", "") // Убираем решетку (если это нужно)
-                .replace("+", "\\+") // Экранируем плюс
-                .replace("-", "\\-") // Экранируем дефис
-                .replace("=", "\\=") // Экранируем равно
-                .replace("|", "\\|") // Экранируем вертикальную черту
-                .replace("{", "\\{") // Экранируем фигурную скобку открывающую
-                .replace("}", "\\}") // Экранируем фигурную скобку закрывающую
-                .replace(".", "\\.") // Экранируем точку
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+                .replace("#", "")
+                .replace("+", "\\+")
+                .replace("-", "\\-")
+                .replace("=", "\\=")
+                .replace("|", "\\|")
+                .replace("{", "\\{")
+                .replace("}", "\\}")
+                .replace(".", "\\.")
                 .replace("<", "\\<")
                 .replace(">", "\\>")
                 .replace("!", "\\!")
                 .replace("'", "\\'")
-                .replace("[", "\\[") // Экранируем открывающую квадратную скобку
-                .replace("]", "\\]"); // Экранируем восклицательный знак
+                .replace("[", "\\[")
+                .replace("]", "\\]");
     }
 
     public boolean isBotMentioned(Message message) {
