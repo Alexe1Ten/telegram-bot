@@ -3,7 +3,8 @@ package ru.aten.telegram_bot.command;
 public enum TelegramCommands {
 
     START_COMMAND("/start"),
-    CLEAR_COMMAND("/clear");
+    CLEAR_COMMAND("/clear"),
+    EDIT_USER_COMMAND("/editUser");
 
     private final String commandValue;
 

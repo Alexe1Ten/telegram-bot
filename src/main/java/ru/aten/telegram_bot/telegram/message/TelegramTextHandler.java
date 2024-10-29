@@ -30,6 +30,8 @@ public class TelegramTextHandler {
         sendMessage.setMessageThreadId(message.getMessageThreadId());
         sendMessage.setParseMode("MarkdownV2");
 
+        System.out.println(message.getChatId().toString());
+
         if (message.getMessageThreadId() != null) {
             sendMessage.setMessageThreadId(message.getMessageThreadId());
         }

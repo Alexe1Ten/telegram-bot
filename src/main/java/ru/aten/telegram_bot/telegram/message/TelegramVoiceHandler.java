@@ -36,8 +36,6 @@ public class TelegramVoiceHandler {
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.enableMarkdownV2(true);
 
-        System.out.println("Отправляемое сообщение: " + messageText);
-
         if (message.getMessageThreadId() != null) {
             sendMessage.setMessageThreadId(message.getMessageThreadId());
         }
