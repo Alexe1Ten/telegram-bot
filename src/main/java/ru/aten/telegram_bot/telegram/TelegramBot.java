@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import ru.aten.telegram_bot.command.handler.EditUserCommandHandler;
+import ru.aten.telegram_bot.command.handler.edit.EditUserCommandHandler;
 import ru.aten.telegram_bot.telegram.message.TelegramUpdateMessageHandler;
 
 @Slf4j
@@ -39,12 +39,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             if (update.hasCallbackQuery()) {
                 CallbackQuery callbackQuery = update.getCallbackQuery();
-                // Предполагается, что у вас есть метод для получения обработчика
                 BotApiMethod<?> response = editUserCommandHandler.handleCallbackQuery(callbackQuery);
                 if (response != null) {
-                    // Отправьте ответ
                     try {
-                        execute(response); // Здесь `execute` - метод вашего бота для отправки сообщений
+                        execute(response);
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
@@ -68,9 +66,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private BotApiMethod<?> processUpdate(Update update) {
-        return update.hasMessage()
-                ? telegramUpdateMessageHandler.handleMessage(update.getMessage())
-                : null;
+        try {
+            return update.hasMessage()
+                    ? telegramUpdateMessageHandler.handleMessage(update.getMessage())
+                    : null;
+        } catch (TelegramApiException e) {
+            log.error("Error while processing update", e);
+            Long chatId = update.getMessage().getChatId();
+            Integer messageThreadId = update.getMessage().getMessageThreadId();
+            sendUserErrorMessage(chatId, messageThreadId);
+            return null;
+        }
     }
 
     @SneakyThrows

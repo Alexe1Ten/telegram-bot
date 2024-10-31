@@ -3,23 +3,26 @@ package ru.aten.telegram_bot.telegram.message;
 import java.net.MalformedURLException;
 import java.util.Map;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.command.TelegramCommandDispatcher;
-import ru.aten.telegram_bot.command.handler.EditUserCommandHandler;
-import ru.aten.telegram_bot.command.handler.EditUserContext;
 import ru.aten.telegram_bot.command.handler.NewMemberHandler;
+import ru.aten.telegram_bot.command.handler.edit.EditUserCommandHandler;
+import ru.aten.telegram_bot.command.handler.edit.EditUserContext;
+import ru.aten.telegram_bot.service.UserService;
 import ru.aten.telegram_bot.telegram.TelegramAsyncMessageSendler;
+import ru.aten.telegram_bot.telegram.TelegramBot;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+// @AllArgsConstructor
 public class TelegramUpdateMessageHandler {
 
     private final TelegramCommandDispatcher telegramCommandDispatcher;
@@ -28,10 +31,30 @@ public class TelegramUpdateMessageHandler {
     private final TelegramVoiceHandler telegramVoiceHandler;
     private final NewMemberHandler newMemberHandler;
     private final EditUserCommandHandler editUserCommandHandler;
+    private final UserService usersService;
+    private final TelegramBot telegramBot;
 
-    
-    public BotApiMethod<?> handleMessage(Message message) {
-        Map<Long, EditUserContext> editUserContexts = editUserCommandHandler.getEditUserContexts();
+    public TelegramUpdateMessageHandler(
+            EditUserCommandHandler editUserCommandHandler,
+            NewMemberHandler newMemberHandler,
+            TelegramAsyncMessageSendler telegramAsyncMessageSendler,
+            @Lazy TelegramBot telegramBot,
+            TelegramCommandDispatcher telegramCommandDispatcher,
+            TelegramTextHandler telegramTextHandler,
+            TelegramVoiceHandler telegramVoiceHandler,
+            UserService usersService) {
+        this.editUserCommandHandler = editUserCommandHandler;
+        this.newMemberHandler = newMemberHandler;
+        this.telegramAsyncMessageSendler = telegramAsyncMessageSendler;
+        this.telegramBot = telegramBot;
+        this.telegramCommandDispatcher = telegramCommandDispatcher;
+        this.telegramTextHandler = telegramTextHandler;
+        this.telegramVoiceHandler = telegramVoiceHandler;
+        this.usersService = usersService;
+    }
+
+    public BotApiMethod<?> handleMessage(Message message) throws TelegramApiException {
+        Map<Long, EditUserContext> editUserContexts = usersService.getEditUserContext();
         Long userId = message.getFrom().getId();
 
         if (telegramCommandDispatcher.isCommand(message)) {
@@ -41,30 +64,31 @@ public class TelegramUpdateMessageHandler {
         if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting()) {
             EditUserContext context = editUserContexts.get(userId);
             String newValue = message.getText();
-            System.out.println(context);
 
             editUserContexts.remove(userId);
-            editUserCommandHandler.setEditUserContexts(editUserContexts);
+            usersService.setEditUserContext(editUserContexts);
 
             return editUserCommandHandler.requestNewValue(context.getCallbackQuery(), context.getTelegramId(), context.getFieldName(), newValue);
         }
 
         var chatId = message.getChatId().toString();
 
-        // Проверка, содержит ли обновление сообщение с новыми участниками
         if (!message.getNewChatMembers().isEmpty()) {
+            for (User newMember : message.getNewChatMembers()) {
+                Long telegramId = newMember.getId();
+                String userName = newMember.getFirstName();
+                String messageText = String.format("[*%s*](tg://user?id=%d), Добро пожаловать\\!", userName, telegramId);
 
-            var userName = message.getNewChatMembers().getFirst().getFirstName();
+                SendMessage sendMessageBuilder = SendMessage.builder()
+                        .chatId(chatId)
+                        .text(messageText)
+                        .parseMode("MarkdownV2") // Указание parseMode для Markdown
+                        .build();
 
-            String messageText = String.format("[*%s*](tg://user?id=%d), Добро пожаловать\\!", userName, userId);
-            SendMessage sendMessageBuilder = SendMessage.builder()
-                    .chatId(chatId)
-                    .text(messageText)
-                    .parseMode("MarkdownV2") // Указание parseMode для Markdown
-                    .build();
 
+                telegramBot.execute(sendMessageBuilder);
+            }
             newMemberHandler.processNewChatMember(message);
-            return sendMessageBuilder;
         }
 
         boolean isPrivateChat = message.getChat().isUserChat();

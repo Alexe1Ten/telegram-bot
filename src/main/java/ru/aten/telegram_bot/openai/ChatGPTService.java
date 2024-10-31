@@ -28,11 +28,10 @@ public class ChatGPTService {
         chatGptHistoryService.createHistoryIfNotExist(userId);
 
         User me = User.builder()
-                    .telegramId((long)835880897)
-                    .firstName("Алексей")
-                    .lastName("Тен")
-                    .patronymic("Витальевич")
-                    .position("Заместитель Управляющего Отделом Плитка")
+                .telegramId((long) 835880897)
+                .firstName("Алексей")
+                .lastName("Тен")
+                .patronymic("Витальевич")
                 .build();
 
         List<MessageDTO> contextMessages = contextService.getContextForUser(userId);

@@ -8,6 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.aten.telegram_bot.model.annotations.AdminOnly;
+import ru.aten.telegram_bot.model.annotations.Displayable;
+import ru.aten.telegram_bot.model.annotations.FieldDisplayName;
+import ru.aten.telegram_bot.model.annotations.Modifiable;
+import ru.aten.telegram_bot.model.enums.Position;
+import ru.aten.telegram_bot.model.enums.Role;
 
 @Entity
 @Data
@@ -17,18 +23,45 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Displayable(value = false)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer userId;
-
+    @Displayable(value = false)
+    @Modifiable(value = false)
+    @AdminOnly(value = true)
     private Long telegramId;
-    private Long groupId;
 
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Имя")
     private String firstName;
+
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Фамилия")
     private String lastName;
+
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Отчество")
     private String patronymic;
 
-    private String position;
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Должность")
+    private Position position;
+
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Роль")
+    private Role role;
 
 }
