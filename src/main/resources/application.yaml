@@ -23,3 +23,5 @@ bot:
     token: 6612365421:AAGrRVc3hb6zrwO4RFBAo16HBIXwizqL2uU
 openai:
     token: sk-HS0QGDZkOUIGZggeWyDZHjr6elvXNWGK
+telegram:
+    group-id: -1002045830415

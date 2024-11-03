@@ -1,5 +1,6 @@
 package ru.aten.telegram_bot.command.handler.edit;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,20 +19,19 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.model.User;
-import ru.aten.telegram_bot.model.annotations.AdminOnly;
+import ru.aten.telegram_bot.model.UserInfo;
 import ru.aten.telegram_bot.model.annotations.Displayable;
 import ru.aten.telegram_bot.model.annotations.FieldDisplayName;
-import ru.aten.telegram_bot.model.annotations.Modifiable;
 import ru.aten.telegram_bot.service.UserService;
 
 @Slf4j
 @Component
 @AllArgsConstructor
-public class EditUserFieldHandler {
+public class EditUserHandler {
 
     private final UserService userService;
 
-    public BotApiMethod<?> handleEditUser(CallbackQuery callbackQuery, Long requestFrom, Long telegramId) {
+    public BotApiMethod<?> handleEditUser(CallbackQuery callbackQuery, EditType type, Long telegramId) throws IOException {
         Optional<User> userOptional = userService.getUserByTelegramId(telegramId);
         if (userOptional.isEmpty()) {
             return EditMessageText.builder()
@@ -41,7 +41,19 @@ public class EditUserFieldHandler {
                     .build();
         }
 
-        InlineKeyboardMarkup keyboardMarkup = createUserFieldKeyboard(userOptional.get(), callbackQuery.getFrom().getId(), telegramId);
+        User user = userOptional.get();
+        InlineKeyboardMarkup keyboardMarkup;
+
+        switch (type) {
+            case FIELD -> keyboardMarkup = createFieldKeyboard(user, type, callbackQuery.getFrom().getId(), telegramId);
+            case INFO -> {
+                UserInfo userInfo = user.getUserInfo();
+                keyboardMarkup = createFieldKeyboard(userInfo, type, callbackQuery.getFrom().getId(), telegramId);
+            }
+            default -> throw new IOException("Неизвестный тип");
+        }
+
+
         Map<Long, EditUserContext> contextMap = new HashMap<>();
         userService.setEditUserContext(contextMap);
         return keyboardMarkup.getKeyboard().isEmpty()
@@ -58,9 +70,9 @@ public class EditUserFieldHandler {
                         .build();
     }
 
-    private InlineKeyboardMarkup createUserFieldKeyboard(User user, Long requestFrom, Long telegramId) {
+    private InlineKeyboardMarkup createFieldKeyboard(Object object, EditType editType, Long requestFrom, Long telegramId) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        Field[] fields = User.class.getDeclaredFields();
+        Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);
@@ -69,17 +81,21 @@ public class EditUserFieldHandler {
             }
 
             try {
-                Object value = field.get(user);
+                Object value = field.get(object);
                 if (value == null) {
                     value = "нет значения";
                 }
 
-                InlineKeyboardButton button = createButtonForField(field, value, requestFrom, telegramId);
+                InlineKeyboardButton button = createButtonForField(field, editType, value, requestFrom, telegramId);
                 keyboard.add(Collections.singletonList(button));
             } catch (IllegalAccessException e) {
                 log.error("Ошибка доступа к полю пользователя: " + field.getName(), e);
             }
         }
+
+        addNavigationButtons(keyboard, editType, telegramId);
+
+        addCancelButton(keyboard);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         keyboardMarkup.setKeyboard(keyboard);
@@ -92,37 +108,44 @@ public class EditUserFieldHandler {
         return displayableAnnotation != null && displayableAnnotation.value();
     }
 
-    private InlineKeyboardButton createButtonForField(Field field, Object value, Long requestFrom, Long telegramId) {
-        Optional<User> userOptional = userService.getUserByTelegramId(telegramId);
-
-        User user = userOptional.get();
-        boolean isAdmin = userService.isAdmin(user);
+    private InlineKeyboardButton createButtonForField(Field field, EditType type, Object value, Long requestFrom, Long telegramId) {
 
         String fieldName = field.getAnnotation(FieldDisplayName.class).value();
-        AdminOnly adminOnlyAnnotation = field.getAnnotation(AdminOnly.class);
-        Modifiable modifiableAnnotation = field.getAnnotation(Modifiable.class);
-
         String buttonText = fieldName + ": " + value;
         String callbackData;
-
-        if (adminOnlyAnnotation
-                != null && adminOnlyAnnotation.value()
-                && !isAdmin) {
-            buttonText += " (Только для администратора)";
-            callbackData = "edit_user_field:" + requestFrom + ":" + telegramId + ":" + field.getName();
-        } else if (modifiableAnnotation
-                == null || !modifiableAnnotation.value()) {
-            buttonText += " (Не доступно для изменения)";
-            callbackData = "disabled:" + field.getName();
-        } else {
-            buttonText = "Изменить " + buttonText;
-            callbackData = "edit_user_field:" + requestFrom + ":" + telegramId + ":" + field.getName();
-        }
+        callbackData = "edit_user_field:%s:%s:%s:%s".formatted(type.getTypeValue(), requestFrom, telegramId, field.getName());
 
         return InlineKeyboardButton.builder()
                 .text(buttonText)
                 .callbackData(callbackData)
                 .build();
+    }
+
+    private InlineKeyboardButton createNavigationButton(String text, EditType targetType, Long telegramId) {
+        return InlineKeyboardButton.builder()
+                .text(text)
+                .callbackData("edit_user:%s:%s".formatted(targetType.getTypeValue(), telegramId))
+                .build();
+    }
+
+    private void addNavigationButtons(List<List<InlineKeyboardButton>> keyboard, EditType editType, Long telegramId) {
+        InlineKeyboardButton navigationButton;
+        switch (editType) {
+            case FIELD -> navigationButton = createNavigationButton("Дополнительно", EditType.INFO, telegramId);
+            case INFO -> navigationButton = createNavigationButton("Назад", EditType.FIELD, telegramId);
+            default -> {
+                return;
+            }
+        }
+        keyboard.add(Collections.singletonList(navigationButton));
+    }
+    
+    private void addCancelButton(List<List<InlineKeyboardButton>> keyboard) {
+        InlineKeyboardButton cancelButton = InlineKeyboardButton.builder()
+                .text("Отмена")
+                .callbackData(String.format("cancel_edit:"))
+                .build();
+        keyboard.add(Collections.singletonList(cancelButton));
     }
 
 }

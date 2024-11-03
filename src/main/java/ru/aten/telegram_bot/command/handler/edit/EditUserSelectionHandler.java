@@ -38,7 +38,7 @@ public class EditUserSelectionHandler {
         for (User user : users) {
             InlineKeyboardButton button = InlineKeyboardButton.builder()
                 .text(user.getFirstName() + " " + user.getLastName())
-                .callbackData("edit_user:" + user.getTelegramId())
+                .callbackData("edit_user:%s:%s".formatted(EditType.FIELD.getTypeValue(), user.getTelegramId()))
                 .build();
             keyboard.add(Collections.singletonList(button));
         }

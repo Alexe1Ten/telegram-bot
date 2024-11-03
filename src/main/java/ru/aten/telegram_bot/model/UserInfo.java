@@ -1,10 +1,11 @@
 package ru.aten.telegram_bot.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,15 +15,13 @@ import ru.aten.telegram_bot.model.annotations.AdminOnly;
 import ru.aten.telegram_bot.model.annotations.Displayable;
 import ru.aten.telegram_bot.model.annotations.FieldDisplayName;
 import ru.aten.telegram_bot.model.annotations.Modifiable;
-import ru.aten.telegram_bot.model.enums.Position;
-import ru.aten.telegram_bot.model.enums.Role;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class UserInfo {
 
     @Id
     @Displayable(value = false)
@@ -31,43 +30,42 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Displayable(value = false)
-    @Modifiable(value = false)
-    @AdminOnly(value = true)
-    private Long telegramId;
+    @OneToOne(mappedBy= "userInfo")
+    private User user;
 
     @Displayable(value = true)
     @Modifiable(value = true)
     @AdminOnly(value = true)
-    @FieldDisplayName(value="Имя")
-    private String firstName;
+    @FieldDisplayName(value="Дата приема")
+    private LocalDate dateOfAdmission;
 
     @Displayable(value = true)
     @Modifiable(value = true)
     @AdminOnly(value = true)
-    @FieldDisplayName(value="Фамилия")
-    private String lastName;
+    @FieldDisplayName(value="Вахта")
+    private String watch;
 
     @Displayable(value = true)
     @Modifiable(value = true)
     @AdminOnly(value = true)
-    @FieldDisplayName(value="Отчество")
-    private String patronymic;
+    @FieldDisplayName(value="Номер телефона")
+    private String phoneNumber;
 
     @Displayable(value = true)
     @Modifiable(value = true)
     @AdminOnly(value = true)
-    @FieldDisplayName(value="Должность")
-    private Position position;
+    @FieldDisplayName(value="Размер обуви")
+    private Integer shoeSize;
 
     @Displayable(value = true)
     @Modifiable(value = true)
     @AdminOnly(value = true)
-    @FieldDisplayName(value="Роль")
-    private Role role;
+    @FieldDisplayName(value="Марка авто")
+    private String carModel;
 
-    @OneToOne
-    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
-    private UserInfo userInfo;
-
+    @Displayable(value = true)
+    @Modifiable(value = true)
+    @AdminOnly(value = true)
+    @FieldDisplayName(value="Гос номер")
+    private String stateNumber;
 }

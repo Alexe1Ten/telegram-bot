@@ -1,5 +1,6 @@
 package ru.aten.telegram_bot.telegram.message;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class TelegramUpdateMessageHandler {
         this.usersService = usersService;
     }
 
-    public BotApiMethod<?> handleMessage(Message message) throws TelegramApiException {
+    public BotApiMethod<?> handleMessage(Message message) throws TelegramApiException, IOException {
         Map<Long, EditUserContext> editUserContexts = usersService.getEditUserContext();
         Long userId = message.getFrom().getId();
 
@@ -68,7 +69,7 @@ public class TelegramUpdateMessageHandler {
             editUserContexts.remove(userId);
             usersService.setEditUserContext(editUserContexts);
 
-            return editUserCommandHandler.requestNewValue(context.getCallbackQuery(), context.getTelegramId(), context.getFieldName(), newValue);
+            return editUserCommandHandler.requestNewValue(context.getCallbackQuery(), context.getEditType(), context.getTelegramId(), context.getField(), newValue);
         }
 
         var chatId = message.getChatId().toString();

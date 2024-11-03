@@ -8,5 +8,10 @@
     "name": "openai.token",
     "type": "java.lang.String",
     "description": "A description for 'openai.token'"
+  },
+  {
+    "name": "telegram.group-id",
+    "type": "java.lang.String",
+    "description": "A description for 'telegram.group-id'"
   }
 ]}

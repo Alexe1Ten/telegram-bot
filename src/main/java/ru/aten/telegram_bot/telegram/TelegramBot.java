@@ -1,5 +1,7 @@
 package ru.aten.telegram_bot.telegram;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
@@ -70,7 +72,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             return update.hasMessage()
                     ? telegramUpdateMessageHandler.handleMessage(update.getMessage())
                     : null;
-        } catch (TelegramApiException e) {
+        } catch (TelegramApiException | IOException e) {
             log.error("Error while processing update", e);
             Long chatId = update.getMessage().getChatId();
             Integer messageThreadId = update.getMessage().getMessageThreadId();

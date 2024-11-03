@@ -1,5 +1,6 @@
 package ru.aten.telegram_bot.command.handler.edit;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.model.User;
+import ru.aten.telegram_bot.model.UserInfo;
+import ru.aten.telegram_bot.model.annotations.FieldDisplayName;
 import ru.aten.telegram_bot.service.UserService;
 
 @Slf4j
@@ -23,19 +26,32 @@ public class NewValueFromUserHandler {
 
     public BotApiMethod<?> handleNewValue(
             CallbackQuery callbackQuery,
+            EditType editType,
             Long requestFrom,
             Long telegramId,
             String fieldName
-    ) {
+    ) throws NoSuchFieldException, SecurityException {
         Optional<User> userOptional = userService.getUserByTelegramId(telegramId);
         if (userOptional.isEmpty()) {
             return EditMessageText.builder()
-                    .chatId(callbackQuery.getMessage().getChatId().toString())
-                    .messageId(callbackQuery.getMessage().getMessageId())
-                    .text("Пользователь не найден")
-                    .build();
+            .chatId(callbackQuery.getMessage().getChatId().toString())
+            .messageId(callbackQuery.getMessage().getMessageId())
+            .text("Пользователь не найден")
+            .build();
         } else {
-            EditUserContext context = new EditUserContext(true, callbackQuery, requestFrom, telegramId, fieldName);
+            User user = userOptional.get();
+            UserInfo userInfo = user.getUserInfo();
+            Field field;
+
+            switch (editType) {
+                case FIELD -> field = user.getClass().getDeclaredField(fieldName);
+                case INFO -> field = userInfo.getClass().getDeclaredField(fieldName);
+                default -> throw new NoSuchFieldException("Неизвестное поле");
+            }
+
+            fieldName = field.getAnnotation(FieldDisplayName.class).value();
+
+            EditUserContext context = new EditUserContext(true, callbackQuery, editType, requestFrom, telegramId, field);
             Map<Long, EditUserContext> contextMap = new HashMap<>();
             contextMap.put(requestFrom, context);
             userService.setEditUserContext(contextMap);
