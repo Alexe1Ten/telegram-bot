@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import ru.aten.telegram_bot.command.TelegramCommandHandler;
-import ru.aten.telegram_bot.command.TelegramCommands;
+import ru.aten.telegram_bot.model.enums.TelegramCommands;
 
 @Component
 public class StartCommandHandler implements TelegramCommandHandler {

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.aten.telegram_bot.model.enums.EditType;
 
 @AllArgsConstructor
 @Data

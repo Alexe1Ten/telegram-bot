@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import lombok.AllArgsConstructor;
 import ru.aten.telegram_bot.model.User;
+import ru.aten.telegram_bot.model.enums.EditType;
 import ru.aten.telegram_bot.service.UserService;
 
 @Component

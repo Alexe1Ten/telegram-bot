@@ -26,14 +26,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.command.TelegramCommandHandler;
-import ru.aten.telegram_bot.command.TelegramCommands;
 import ru.aten.telegram_bot.command.handler.edit.CancelHandler;
-import ru.aten.telegram_bot.command.handler.edit.EditType;
 import ru.aten.telegram_bot.command.handler.edit.EditUserContext;
 import ru.aten.telegram_bot.command.handler.edit.EditUserHandler;
 import ru.aten.telegram_bot.command.handler.edit.FieldValueConverter;
 import ru.aten.telegram_bot.model.User;
 import ru.aten.telegram_bot.model.UserInfo;
+import ru.aten.telegram_bot.model.enums.EditType;
+import ru.aten.telegram_bot.model.enums.TelegramCommands;
 import ru.aten.telegram_bot.service.UserService;
 import ru.aten.telegram_bot.telegram.TelegramFileService;
 

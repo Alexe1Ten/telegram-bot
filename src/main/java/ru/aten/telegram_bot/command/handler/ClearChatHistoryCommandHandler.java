@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import lombok.AllArgsConstructor;
 import ru.aten.telegram_bot.command.TelegramCommandHandler;
-import ru.aten.telegram_bot.command.TelegramCommands;
+import ru.aten.telegram_bot.model.enums.TelegramCommands;
 import ru.aten.telegram_bot.openai.api.ChatGptHistoryService;
 
 @Component

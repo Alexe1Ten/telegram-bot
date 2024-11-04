@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.model.User;
 import ru.aten.telegram_bot.model.UserInfo;
 import ru.aten.telegram_bot.model.annotations.FieldDisplayName;
+import ru.aten.telegram_bot.model.enums.EditType;
 import ru.aten.telegram_bot.service.UserService;
 
 @Slf4j

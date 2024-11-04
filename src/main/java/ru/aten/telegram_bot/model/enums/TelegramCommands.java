@@ -1,11 +1,12 @@
-package ru.aten.telegram_bot.command;
+package ru.aten.telegram_bot.model.enums;
 
 public enum TelegramCommands {
 
     START_COMMAND("/start"),
     CLEAR_COMMAND("/clear"),
     EDIT_USER_COMMAND("/editUser"),
-    IMPORT_FILE("/importFile");
+    IMPORT_FILE("/importFile"),
+    EXPORT_FILE("/exportFile");
 
     private final String commandValue;
 

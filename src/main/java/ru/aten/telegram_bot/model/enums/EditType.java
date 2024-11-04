@@ -1,4 +1,4 @@
-package ru.aten.telegram_bot.command.handler.edit;
+package ru.aten.telegram_bot.model.enums;
 
 
 public enum EditType {
