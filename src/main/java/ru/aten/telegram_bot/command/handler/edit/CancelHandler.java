@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CancelHandler {
 
-    public BotApiMethod<?> cancelOperation(CallbackQuery callbackQuery) {
+    public static BotApiMethod<?> cancelOperation(CallbackQuery callbackQuery) {
         return EditMessageText.builder()
                 .text("Изменения внесены")
                 .chatId(callbackQuery.getMessage().getChatId().toString())

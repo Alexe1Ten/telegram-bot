@@ -62,7 +62,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь не найден с ID: " + user.getTelegramId());
         }
         userInfoRepository.save(user.getUserInfo());
-        userRepository.save(user); // Этот метод сохранит изменения в базе данных
+        userRepository.save(user);
     }
 
     public boolean existsByTelegramId(Long telegramId) {

@@ -14,7 +14,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.command.TelegramCommandDispatcher;
+import ru.aten.telegram_bot.command.handler.ImportFileHandler;
 import ru.aten.telegram_bot.command.handler.NewMemberHandler;
+import ru.aten.telegram_bot.command.handler.edit.EditType;
 import ru.aten.telegram_bot.command.handler.edit.EditUserCommandHandler;
 import ru.aten.telegram_bot.command.handler.edit.EditUserContext;
 import ru.aten.telegram_bot.service.UserService;
@@ -32,11 +34,13 @@ public class TelegramUpdateMessageHandler {
     private final TelegramVoiceHandler telegramVoiceHandler;
     private final NewMemberHandler newMemberHandler;
     private final EditUserCommandHandler editUserCommandHandler;
+    private final ImportFileHandler importFileHandler;
     private final UserService usersService;
     private final TelegramBot telegramBot;
 
     public TelegramUpdateMessageHandler(
             EditUserCommandHandler editUserCommandHandler,
+            ImportFileHandler importFileHandler,
             NewMemberHandler newMemberHandler,
             TelegramAsyncMessageSendler telegramAsyncMessageSendler,
             @Lazy TelegramBot telegramBot,
@@ -45,6 +49,7 @@ public class TelegramUpdateMessageHandler {
             TelegramVoiceHandler telegramVoiceHandler,
             UserService usersService) {
         this.editUserCommandHandler = editUserCommandHandler;
+        this.importFileHandler = importFileHandler;
         this.newMemberHandler = newMemberHandler;
         this.telegramAsyncMessageSendler = telegramAsyncMessageSendler;
         this.telegramBot = telegramBot;
@@ -62,7 +67,8 @@ public class TelegramUpdateMessageHandler {
             return telegramCommandDispatcher.processCommand(message);
         }
 
-        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting()) {
+        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && message.hasText() && !editUserContexts.get(userId).getEditType().equals(EditType.FIlE)) {
+            
             EditUserContext context = editUserContexts.get(userId);
             String newValue = message.getText();
 
@@ -70,6 +76,10 @@ public class TelegramUpdateMessageHandler {
             usersService.setEditUserContext(editUserContexts);
 
             return editUserCommandHandler.requestNewValue(context.getCallbackQuery(), context.getEditType(), context.getTelegramId(), context.getField(), newValue);
+        }
+
+        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && editUserContexts.get(userId).getEditType().equals(EditType.FIlE)) {
+            return importFileHandler.getFileFromUser(message);
         }
 
         var chatId = message.getChatId().toString();

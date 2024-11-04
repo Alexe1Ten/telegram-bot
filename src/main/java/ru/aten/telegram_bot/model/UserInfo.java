@@ -2,6 +2,7 @@ package ru.aten.telegram_bot.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class UserInfo {
     @Modifiable(value = true)
     @AdminOnly(value = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true)
     private Long id;
 
     @OneToOne(mappedBy= "userInfo")

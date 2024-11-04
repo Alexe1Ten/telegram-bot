@@ -140,7 +140,7 @@ public class EditUserHandler {
         keyboard.add(Collections.singletonList(navigationButton));
     }
     
-    private void addCancelButton(List<List<InlineKeyboardButton>> keyboard) {
+    public static void addCancelButton(List<List<InlineKeyboardButton>> keyboard) {
         InlineKeyboardButton cancelButton = InlineKeyboardButton.builder()
                 .text("Отмена")
                 .callbackData(String.format("cancel_edit:"))

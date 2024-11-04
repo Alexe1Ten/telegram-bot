@@ -3,7 +3,9 @@ package ru.aten.telegram_bot.command.handler.edit;
 
 public enum EditType {
     FIELD("field"),
-    INFO("info");
+    INFO("info"),
+    FIlE("file");
+
 
     private final String typeValue;
 

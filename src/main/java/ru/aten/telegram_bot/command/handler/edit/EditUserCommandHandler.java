@@ -34,7 +34,6 @@ public class EditUserCommandHandler implements TelegramCommandHandler {
     private final EditUserSelectionHandler selectionHandler;
     private final EditUserHandler userHandler;
     private final NewValueFromUserHandler newValueHandler;
-    private final CancelHandler cancelHandler;
 
     @Override
     public BotApiMethod<?> processCommand(Message message) {
@@ -63,7 +62,7 @@ public class EditUserCommandHandler implements TelegramCommandHandler {
             String fieldName = parts[4];
             return newValueHandler.handleNewValue(callbackQuery, type, requestFrom, telegramId, fieldName);
         } else if (data.startsWith("cancel_edit:")) {
-            return cancelHandler.cancelOperation(callbackQuery);
+            return CancelHandler.cancelOperation(callbackQuery);
         } else {
             return null;
         }
