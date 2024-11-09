@@ -48,7 +48,7 @@ public class ImportFileHandler implements TelegramCommandHandler {
     @Override
     public BotApiMethod<?> processCommand(Message message) {
         Long requestFrom = message.getFrom().getId();
-        EditUserContext context = new EditUserContext(true, null, EditType.FIlE, requestFrom, null, null);
+        EditUserContext context = new EditUserContext(true, null, EditType.FILE, requestFrom, null, null);
         Map<Long, EditUserContext> contextMap = new HashMap<>();
         contextMap.put(requestFrom, context);
         userService.setEditUserContext(contextMap);
@@ -94,7 +94,7 @@ public class ImportFileHandler implements TelegramCommandHandler {
     private BotApiMethod<?> proccessExcelFile(Message message, File file) {
         String fileName = message.getDocument().getFileName();
         return switch (fileName) {
-            case "EditUser.xlsx" ->
+            case "Users.xlsx" ->
                 changeUser(message, file);
             // case "EditSchedule.xlsx" ->
             //     changeSchedule(message, file);

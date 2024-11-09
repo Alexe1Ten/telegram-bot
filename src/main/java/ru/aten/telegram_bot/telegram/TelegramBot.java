@@ -1,19 +1,23 @@
 package ru.aten.telegram_bot.telegram;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import ru.aten.telegram_bot.command.handler.ExportHandler;
 import ru.aten.telegram_bot.command.handler.edit.EditUserCommandHandler;
 import ru.aten.telegram_bot.telegram.message.TelegramUpdateMessageHandler;
 
@@ -23,15 +27,18 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final TelegramUpdateMessageHandler telegramUpdateMessageHandler;
     private final EditUserCommandHandler editUserCommandHandler;
+    private final ExportHandler exportHandler;
 
     public TelegramBot(
             @Value(value = "${bot.token}") String botToken,
             TelegramUpdateMessageHandler telegramUpdateMessageHandler,
-            EditUserCommandHandler editUserCommandHandler
+            EditUserCommandHandler editUserCommandHandler,
+            ExportHandler exportHandler
     ) {
         super(new DefaultBotOptions(), botToken);
         this.telegramUpdateMessageHandler = telegramUpdateMessageHandler;
         this.editUserCommandHandler = editUserCommandHandler;
+        this.exportHandler = exportHandler;
     }
 
     @SneakyThrows
@@ -41,7 +48,24 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             if (update.hasCallbackQuery()) {
                 CallbackQuery callbackQuery = update.getCallbackQuery();
-                BotApiMethod<?> response = editUserCommandHandler.handleCallbackQuery(callbackQuery);
+                String callbackData = callbackQuery.getData();
+                BotApiMethod<?> response;
+
+                switch (callbackData.split(":")[0]) {
+                    case "edit_user":
+                        response = editUserCommandHandler.handleCallbackQuery(callbackQuery);
+                        break;
+                    case "cancel":
+                        response = editUserCommandHandler.handleCallbackQuery(callbackQuery);
+                        break;
+                    case "export":
+                        response = exportHandler.handleCallbackQuery(callbackQuery);
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
+
+
                 if (response != null) {
                     try {
                         execute(response);
@@ -100,4 +124,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         return "DondonnyBot";
     }
 
+    @Override
+    public CompletableFuture<Message> executeAsync(SendDocument sendDocument) {
+        // TODO Auto-generated method stub
+        return super.executeAsync(sendDocument);
+    }
 }

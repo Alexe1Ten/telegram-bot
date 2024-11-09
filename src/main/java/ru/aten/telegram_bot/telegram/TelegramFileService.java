@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -58,5 +59,10 @@ public class TelegramFileService {
             throw new RuntimeException("Error while dounloading file", e);
         }
         return fileTemp;
+    }
+
+    public void sendFile(SendDocument sendDocument) {
+        // telegramBot.execute(sendDocument);
+        telegramSender.executeAsync(sendDocument);
     }
 }

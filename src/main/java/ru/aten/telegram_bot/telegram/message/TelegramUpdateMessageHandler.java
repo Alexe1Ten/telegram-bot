@@ -67,7 +67,7 @@ public class TelegramUpdateMessageHandler {
             return telegramCommandDispatcher.processCommand(message);
         }
 
-        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && message.hasText() && !editUserContexts.get(userId).getEditType().equals(EditType.FIlE)) {
+        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && message.hasText() && !editUserContexts.get(userId).getEditType().equals(EditType.FILE)) {
             
             EditUserContext context = editUserContexts.get(userId);
             String newValue = message.getText();
@@ -78,7 +78,7 @@ public class TelegramUpdateMessageHandler {
             return editUserCommandHandler.requestNewValue(context.getCallbackQuery(), context.getEditType(), context.getTelegramId(), context.getField(), newValue);
         }
 
-        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && editUserContexts.get(userId).getEditType().equals(EditType.FIlE)) {
+        if (editUserContexts.containsKey(userId) && editUserContexts.get(userId).isWaiting() && editUserContexts.get(userId).getEditType().equals(EditType.FILE)) {
             return importFileHandler.getFileFromUser(message);
         }
 

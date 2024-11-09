@@ -33,6 +33,7 @@ public class UserInfo {
     private Long id;
 
     @OneToOne(mappedBy= "userInfo")
+    @Displayable(value = false)
     private User user;
 
     @Displayable(value = true)

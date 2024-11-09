@@ -33,7 +33,7 @@ public class User {
     @Column(unique = true)
     private Long id;
 
-    @Displayable(value = false)
+    @Displayable(value = true)
     @Modifiable(value = false)
     @AdminOnly(value = true)
     @Column(unique = true)
@@ -70,6 +70,7 @@ public class User {
     private Role role;
 
     @OneToOne
+    @Displayable(value = false)
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
     private UserInfo userInfo;
 

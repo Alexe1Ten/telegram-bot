@@ -4,7 +4,7 @@ package ru.aten.telegram_bot.model.enums;
 public enum EditType {
     FIELD("field"),
     INFO("info"),
-    FIlE("file");
+    FILE("file");
 
 
     private final String typeValue;
@@ -20,6 +20,7 @@ public enum EditType {
     public static EditType getType(String type) {
         if (FIELD.typeValue.equals(type)) return EditType.FIELD;
         if (INFO.typeValue.equals(type)) return EditType.INFO;
+        if (FILE.typeValue.equals(type)) return EditType.FILE;
         return null;
     }
 }
