@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.entities.Displayable;
 import ru.aten.telegram_bot.entities.User;
 import ru.aten.telegram_bot.entities.UserInfo;
-import ru.aten.telegram_bot.useCases.EmailService;
+import ru.aten.telegram_bot.frameworksAndDrivers.email.EmailService;
 import ru.aten.telegram_bot.useCases.UserService;
 import ru.aten.telegram_bot.useCases.command.TelegramCommandHandler;
 import ru.aten.telegram_bot.useCases.enums.ExportType;
@@ -170,7 +170,7 @@ public class ExportHandler implements TelegramCommandHandler {
         }
     }
 
-    private BotApiMethod<?> exportSchedule(CallbackQuery callbackQuery) {
+    private BotApiMethod<?> exportSchedule(@SuppressWarnings("unused") CallbackQuery callbackQuery) {
         return null;
     }
 

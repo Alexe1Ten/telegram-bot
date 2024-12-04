@@ -1,4 +1,4 @@
-package ru.aten.telegram_bot.frameworksAndDrivers.openai.api;
+package ru.aten.telegram_bot.useCases.gpt;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import ru.aten.telegram_bot.entities.ChatHistory;
 import ru.aten.telegram_bot.entities.Message;
+import ru.aten.telegram_bot.interfaceAdapters.ChatHistoryMapper;
 import ru.aten.telegram_bot.interfaceAdapters.repositories.ChatHistoryRepository;
 import ru.aten.telegram_bot.useCases.dto.ChatHistoryDTO;
 import ru.aten.telegram_bot.useCases.dto.MessageDTO;

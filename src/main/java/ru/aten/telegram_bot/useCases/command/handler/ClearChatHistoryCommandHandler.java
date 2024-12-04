@@ -6,9 +6,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import lombok.AllArgsConstructor;
-import ru.aten.telegram_bot.frameworksAndDrivers.openai.api.ChatGptHistoryService;
 import ru.aten.telegram_bot.useCases.command.TelegramCommandHandler;
 import ru.aten.telegram_bot.useCases.enums.TelegramCommands;
+import ru.aten.telegram_bot.useCases.gpt.ChatGptHistoryService;
 
 @Component
 @AllArgsConstructor

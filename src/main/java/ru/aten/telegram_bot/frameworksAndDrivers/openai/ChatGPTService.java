@@ -9,9 +9,9 @@ import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import ru.aten.telegram_bot.entities.User;
 import ru.aten.telegram_bot.frameworksAndDrivers.openai.api.ChatCompletionRequest;
-import ru.aten.telegram_bot.frameworksAndDrivers.openai.api.ChatGptHistoryService;
 import ru.aten.telegram_bot.frameworksAndDrivers.openai.api.OpenAiClient;
 import ru.aten.telegram_bot.useCases.dto.MessageDTO;
+import ru.aten.telegram_bot.useCases.gpt.ChatGptHistoryService;
 
 @Service
 @AllArgsConstructor

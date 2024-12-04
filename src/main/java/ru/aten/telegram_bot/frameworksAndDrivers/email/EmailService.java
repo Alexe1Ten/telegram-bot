@@ -1,4 +1,4 @@
-package ru.aten.telegram_bot.useCases;
+package ru.aten.telegram_bot.frameworksAndDrivers.email;
 
 import java.io.File;
 import java.io.IOException;

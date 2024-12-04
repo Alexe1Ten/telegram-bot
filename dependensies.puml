@@ -15,8 +15,6 @@ package frameworksAndDrivers <<Layer>> {
         package api {
             class ChatCompletionRequest
             class ChatCompletionResponse
-            class ChatGptHistoryService
-            class ChatHistoryMapper
             class Choice
             class CreateTranscriptionRequest
             class OpenAiClient
@@ -34,10 +32,12 @@ package frameworksAndDrivers <<Layer>> {
     }
 
     package email {
+        class EmailService
     }
 }
 
 package interfaceAdapters <<Layer>> {
+    class ChatHistoryMapper
     package repositories {
         interface UserRepository
         interface UserInfoRepository
@@ -47,9 +47,12 @@ package interfaceAdapters <<Layer>> {
 }
 
 package useCases <<Layer>> {
+    package gpt {
+        class ChatGptHistoryService
+    }
     package command {
         class TelegramCommandDispatcher
-        class TelegramCommandHandler
+        interface TelegramCommandHandler
 
         package handler {
             class ClearChatHistoryCommandHandler
@@ -118,14 +121,125 @@ package entities <<Layer>> {
     annotation Modifiable
 }
 
-UserService ..> UserRepository
-UserService ..> UserInfoRepository
+ChatCompletionRequest --> MessageDTO
 ChatGptHistoryService ..> ChatHistoryRepository
-ChatGptHistoryService -> ChatHistoryMapper
+ChatGptHistoryService --> ChatHistoryMapper
+ChatGptHistoryService --> Message
 ChatHistoryMapper --> ChatHistoryDTO
 ChatHistoryMapper --> MessageDTO
 ChatHistoryMapper --> ChatHistory
 ChatHistoryMapper --> Message
+ChatCompletionRequest --> MessageDTO
+Choice --> MessageDTO
+OpenAiClient --> ChatCompletionRequest
+OpenAiClient --> ChatCompletionResponse
+OpenAiClient --> CreateTranscriptionRequest
+OpenAiClient --> TranscriptionResponse
+TranscribeVoiceToTextService --> OpenAiClient
+ChatGPTService --> OpenAiClient
+ChatGPTService --> ChatGptHistoryService
+ChatGPTService --> ContextService
+ChatGPTService --> User
+ChatGPTService --> ChatCompletionRequest
+ChatGPTService --> ChatGptHistoryService
+ChatGPTService --> ContextService
+ChatGPTService --> MessageDTO
+ContextService --> ChatGptHistoryService
+ContextService --> MessageDTO
+TelegramBot --> TelegramUpdateMessageHandler
+TelegramBot --> EditUserCommandHandler
+TelegramBot --> ExportHandler
+ChatHistoryRepository --> ChatHistory
+ScheduleRepository --> Schedule
+UserInfoRepository --> UserInfo
+UserRepository --> User
+ScheduleService ..> ScheduleRepository
+ScheduleService --> Schedule
+UserService ..> UserRepository
+UserService ..> UserInfoRepository
+UserService --> EditUserContext
+UserService --> Role
+UserService --> User
+UserService --> UserInfo
+UserService --> UserNotFoundException
+TelegramCommandDispatcher ..> TelegramCommandHandler
+ClearChatHistoryCommandHandler ..|> TelegramCommandHandler
+ClearChatHistoryCommandHandler --> ChatGptHistoryService
+ClearChatHistoryCommandHandler --> TelegramCommands
+ExportHandler ..|> TelegramCommandHandler
+ExportHandler --> UserService
+ExportHandler --> TelegramFileService
+ExportHandler --> EmailService
+ExportHandler --> ExportType
+ExportHandler --> Displayable
+ExportHandler --> User
+ExportHandler --> UserInfo
+ExportHandler --> TelegramCommands
+ImportFileHandler ..|> TelegramCommandHandler
+ImportFileHandler --> UserService
+ImportFileHandler --> TelegramFileService
+ImportFileHandler --> User
+ImportFileHandler --> UserInfo
+ImportFileHandler --> CancelHandler
+ImportFileHandler --> EditUserContext
+ImportFileHandler --> EditUserHandler
+ImportFileHandler --> FieldValueConverter
+ImportFileHandler --> EditType
+ImportFileHandler --> TelegramCommands
+NewMemberHandler --> UserService
+NewMemberHandler --> Role
+StartCommandHandler ..|> TelegramCommandHandler
+StartCommandHandler --> TelegramCommands
+EditUserCommandHandler ..|> TelegramCommandHandler
+EditUserCommandHandler --> UserService
+EditUserCommandHandler --> EditUserSelectionHandler
+EditUserCommandHandler --> EditUserHandler
+EditUserCommandHandler --> NewValueFromUserHandler
+EditUserCommandHandler --> FieldDisplayName
+EditUserCommandHandler --> User
+EditUserCommandHandler --> UserInfo
+EditUserCommandHandler --> EditType
+EditUserCommandHandler --> TelegramCommands
+EditUserCommandHandler --> UserNotFoundException
+EditUserCommandHandler --> TelegramCommands
+EditUserCommandHandler --> FieldValueConverter
+EditUserContext --> EditType
+EditUserHandler --> Displayable
+EditUserHandler --> FieldDisplayName
+EditUserHandler --> User
+EditUserHandler --> UserInfo
+EditUserHandler --> UserService
+EditUserHandler --> EditType
+EditUserHandler --> EditUserContext
+EditUserSelectionHandler --> UserService
+EditUserSelectionHandler --> User
+EditUserSelectionHandler --> EditType
+FieldValueConverter --> Position
+FieldValueConverter --> Role
+NewValueFromUserHandler --> UserService
+NewValueFromUserHandler --> FieldDisplayName
+NewValueFromUserHandler --> User
+NewValueFromUserHandler --> UserInfo
+NewValueFromUserHandler --> EditType
+NewValueFromUserHandler --> EditUserContext
+TelegramAsyncMessageSendler --> DefaultAbsSender
+TelegramAsyncMessageSendler --> ExecutorService
+TelegramFileService --> DefaultAbsSender
+TelegramTextHandler --> ChatGPTService
+TelegramUpdateMessageHandler --> TelegramCommandDispatcher
+TelegramUpdateMessageHandler --> TelegramAsyncMessageSendler
+TelegramUpdateMessageHandler --> TelegramTextHandler
+TelegramUpdateMessageHandler --> TelegramVoiceHandler
+TelegramUpdateMessageHandler --> NewMemberHandler
+TelegramUpdateMessageHandler --> EditUserCommandHandler
+TelegramUpdateMessageHandler --> ImportFileHandler
+TelegramUpdateMessageHandler --> UserService
+TelegramUpdateMessageHandler --> TelegramBot
+TelegramUpdateMessageHandler --> EditUserContext
+TelegramVoiceHandler --> TelegramFileService
+TelegramVoiceHandler --> TranscribeVoiceToTextService
+TelegramVoiceHandler --> ChatGPTService
+
 
 
 frameworksAndDrivers -> interfaceAdapters

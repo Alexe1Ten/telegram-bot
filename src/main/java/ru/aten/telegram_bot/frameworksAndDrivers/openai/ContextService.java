@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import ru.aten.telegram_bot.frameworksAndDrivers.openai.api.ChatGptHistoryService;
 import ru.aten.telegram_bot.useCases.dto.MessageDTO;
+import ru.aten.telegram_bot.useCases.gpt.ChatGptHistoryService;
 
 @Service
 @AllArgsConstructor

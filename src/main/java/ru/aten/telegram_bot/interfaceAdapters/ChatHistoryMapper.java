@@ -1,4 +1,4 @@
-package ru.aten.telegram_bot.frameworksAndDrivers.openai.api;
+package ru.aten.telegram_bot.interfaceAdapters;
 
 import java.util.List;
 import java.util.stream.Collectors;
