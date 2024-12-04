@@ -25,3 +25,10 @@ openai:
     token: sk-HS0QGDZkOUIGZggeWyDZHjr6elvXNWGK
 telegram:
     group-id: -1002045830415
+mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: dondonnybot@yandex.ru
+    password: mrxyvbejetozaawf
+    protocol: smtp
+    ssl: true

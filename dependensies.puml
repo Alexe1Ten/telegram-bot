@@ -1,0 +1,135 @@
+@startuml architecture
+
+left to right direction
+
+package frameworksAndDrivers <<Layer>> {
+    package configuration {
+        class AsyncConfig
+        class OpenAiConfiguration
+        class TelegramBotConfiguration
+    }
+
+    package openai {
+        class ChatGPTService
+        class ContextService
+        package api {
+            class ChatCompletionRequest
+            class ChatCompletionResponse
+            class ChatGptHistoryService
+            class ChatHistoryMapper
+            class Choice
+            class CreateTranscriptionRequest
+            class OpenAiClient
+            class TranscribeVoiceToTextService
+            class TranscriptionResponse
+        }
+    }
+
+    package telegram {
+        class TelegramBot {
+            - TelegramUpdateMessageHandler
+            - EditUserCommandHandler
+            - ExportHandler
+        }
+    }
+
+    package email {
+    }
+}
+
+package interfaceAdapters <<Layer>> {
+    package repositories {
+        interface UserRepository
+        interface UserInfoRepository
+        interface ScheduleRepository
+        interface ChatHistoryRepository
+    }
+}
+
+package useCases <<Layer>> {
+    package command {
+        class TelegramCommandDispatcher
+        class TelegramCommandHandler
+
+        package handler {
+            class ClearChatHistoryCommandHandler
+            class ExportHandler
+            class ImportFileHandler
+            class NewMemberHandler
+            class StartCommandHandler
+
+            package edit {
+                class CancelHandler
+                class EditUserCommandHandler
+                class EditUserContext
+                class EditUserHandler
+                class EditUserSelectionHandler
+                class FieldValueConverter
+                class NewValueFromUserHandler
+            }
+        }
+    }
+    package dto {
+        class ChatHistoryDTO
+        class MessageDTO
+        class UserDTO
+    }
+    package enums {
+        enum EditType
+        enum ExportType
+        enum TelegramCommands
+    }
+    package exceptions {
+        class UserNotFoundException
+    }
+    package telegram {
+        class TelegramFileService {
+            - DefaultAbsSender defaultAbsSender
+        }
+        class TelegramAsyncMessageSendler {
+            - DefaultAbsSender defaultAbsSender
+            - ExecutorService executorService
+        }
+        class TelegramTextHandler
+        class TelegramUpdateMessageHandler
+        class TelegramVoiceHandler
+        class TextConverter
+    }
+    class UserService {
+        - UserRepository
+        - UserInfoRepository
+    }
+    class ScheduleService {
+
+    }
+}
+
+package entities <<Layer>> {
+    class User
+    class UserInfo
+    class Schedule
+    class ChatHistory
+    class Message
+    enum Role
+    enum Position
+    annotation AdminOnly
+    annotation Displayable
+    annotation FieldDisplayName
+    annotation Modifiable
+}
+
+UserService ..> UserRepository
+UserService ..> UserInfoRepository
+ChatGptHistoryService ..> ChatHistoryRepository
+ChatGptHistoryService -> ChatHistoryMapper
+ChatHistoryMapper --> ChatHistoryDTO
+ChatHistoryMapper --> MessageDTO
+ChatHistoryMapper --> ChatHistory
+ChatHistoryMapper --> Message
+
+
+frameworksAndDrivers -> interfaceAdapters
+interfaceAdapters -> useCases
+useCases -> entities
+
+@enduml

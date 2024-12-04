@@ -13,5 +13,40 @@
     "name": "telegram.group-id",
     "type": "java.lang.String",
     "description": "A description for 'telegram.group-id'"
+  },
+  {
+    "name": "mail.host",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.host'"
+  },
+  {
+    "name": "mail.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.port'"
+  },
+  {
+    "name": "mail.username",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.username'"
+  },
+  {
+    "name": "mail.password",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.password'"
+  },
+  {
+    "name": "mail.protocol",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.protocol'"
+  },
+  {
+    "name": "mail.tls",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.tls'"
+  },
+  {
+    "name": "mail.ssl",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.ssl'"
   }
 ]}

@@ -1,0 +1,116 @@
+@startuml clean_architecture
+
+' Слой сущностей (Entities)
+package "Entities" {
+    class User
+    class ChatGptHistory
+    class EditUserContext
+}
+
+' Слой сценариев использования (Use Cases)
+package "UseCases" {
+    class EditUserService {
+        - UserService userService
+    }
+    class ExportService {
+        - UserService userService
+        - TelegramFileService telegramFileService
+        - EmailService emailService
+    }
+    class ImportService {
+        - UserService userService
+        - TelegramFileService telegramFileService
+    }
+    class NewMemberService {
+        - UserService userService
+    }
+    class ChatGptHistoryService {
+        - ChatHistoryRepository chatHistoryRepository
+        - ChatHistoryMapper chatHistoryMapper
+    }
+}
+
+' Слой адаптеров интерфейсов (Interface Adapters)
+package "InterfaceAdapters" {
+    class UserController {
+        - EditUserService editUserService
+        - ExportService exportService
+    }
+    class ChatHistoryRepository
+    class ChatHistoryMapper
+    class TelegramBotController {
+        - TelegramCommandDispatcher telegramCommandDispatcher
+        - TelegramBot telegramBot
+    }
+    class TelegramCommandDispatcher {
+        - List<TelegramCommandHandler> telegramCommandHandlerList
+    }
+    class TelegramTextHandler {
+        - ChatGPTService chatGPTService
+    }
+    class TelegramVoiceHandler {
+        - TelegramFileService telegramFileService
+        - TranscribeVoiceToTextService transcribeVoiceToTextService
+        - ChatGPTService chatGPTService
+    }
+}
+
+' Слой фреймворков и драйверов (Frameworks & Drivers)
+package "FrameworksAndDrivers" {
+    class TelegramBot {
+        - TelegramUpdateMessageHandler telegramUpdateMessageHandler
+    }
+    class TelegramFileService {
+        - DefaultAbsSender telegramSender
+    }
+    class TelegramUpdateMessageHandler {
+        - TelegramCommandDispatcher telegramCommandDispatcher
+        - TelegramAsyncMessageSendler telegramAsyncMessageSendler
+        - TelegramTextHandler telegramTextHandler
+        - TelegramVoiceHandler telegramVoiceHandler
+        - NewMemberHandler newMemberHandler
+        - EditUserCommandHandler editUserCommandHandler
+        - ImportFileHandler importFileHandler
+        - UserService usersService
+        - TelegramBot telegramBot
+    }
+    class TelegramAsyncMessageSendler {
+        - DefaultAbsSender defaultAbsSender
+    }
+    class TelegramVoiceHandler {
+        - TelegramFileService telegramFileService
+        - TranscribeVoiceToTextService transcribeVoiceToTextService
+        - ChatGPTService chatGPTService
+    }
+    class DefaultAbsSender
+    class TelegramCommandHandler
+}
+
+' Взаимосвязи между классами
+EditUserService --> UserService
+ExportService --> UserService
+ExportService --> TelegramFileService
+ExportService --> EmailService
+ImportService --> UserService
+ImportService --> TelegramFileService
+NewMemberService --> UserService
+TelegramCommandDispatcher --> TelegramCommandHandler
+TelegramTextHandler --> ChatGPTService
+TelegramVoiceHandler --> TelegramFileService
+TelegramVoiceHandler --> TranscribeVoiceToTextService
+TelegramVoiceHandler --> ChatGPTService
+TelegramUpdateMessageHandler --> TelegramCommandDispatcher
+TelegramUpdateMessageHandler --> TelegramAsyncMessageSendler
+TelegramUpdateMessageHandler --> TelegramTextHandler
+TelegramUpdateMessageHandler --> TelegramVoiceHandler
+TelegramUpdateMessageHandler --> NewMemberHandler
+TelegramUpdateMessageHandler --> EditUserCommandHandler
+TelegramUpdateMessageHandler --> ImportFileHandler
+TelegramUpdateMessageHandler --> UserService
+TelegramUpdateMessageHandler --> TelegramBot
+TelegramFileService --> DefaultAbsSender
+TelegramBot --> TelegramUpdateMessageHandler
+TelegramBot --> EditUserCommandHandler
+TelegramBot --> ExportService
+
+@enduml
