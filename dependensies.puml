@@ -1,8 +1,10 @@
 @startuml architecture
 
-left to right direction
+title Clean Architecture (Vertical Layout)
 
-package frameworksAndDrivers <<Layer>> {
+top to bottom direction
+
+frame "Frameworks And Drivers" <<Layer>> #LightBlue{
     package configuration {
         class AsyncConfig
         class OpenAiConfiguration
@@ -36,7 +38,7 @@ package frameworksAndDrivers <<Layer>> {
     }
 }
 
-package interfaceAdapters <<Layer>> {
+frame "Interface Adapters" <<Layer>> #LightPink{
     class ChatHistoryMapper
     package repositories {
         interface UserRepository
@@ -46,7 +48,7 @@ package interfaceAdapters <<Layer>> {
     }
 }
 
-package useCases <<Layer>> {
+frame "Use Cases" <<Layer>> #LightSeaGreen{
     package gpt {
         class ChatGptHistoryService
     }
@@ -83,7 +85,7 @@ package useCases <<Layer>> {
         enum TelegramCommands
     }
     package exceptions {
-        class UserNotFoundException
+        exception UserNotFoundException
     }
     package telegram {
         class TelegramFileService {
@@ -107,12 +109,14 @@ package useCases <<Layer>> {
     }
 }
 
-package entities <<Layer>> {
-    class User
-    class UserInfo
-    class Schedule
-    class ChatHistory
-    class Message
+
+
+frame "Entities" <<Layer>> #LightYellow{
+    entity User
+    entity UserInfo
+    entity Schedule
+    entity ChatHistory
+    entity Message
     enum Role
     enum Position
     annotation AdminOnly
@@ -120,6 +124,8 @@ package entities <<Layer>> {
     annotation FieldDisplayName
     annotation Modifiable
 }
+
+
 
 ChatCompletionRequest --> MessageDTO
 ChatGptHistoryService ..> ChatHistoryRepository
@@ -242,8 +248,8 @@ TelegramVoiceHandler --> ChatGPTService
 
 
 
-frameworksAndDrivers -> interfaceAdapters
-interfaceAdapters -> useCases
-useCases -> entities
+"Frameworks And Drivers"  -[#red,thickness=8]-> "Interface Adapters"
+"Interface Adapters" -[#blue,thickness=8]-> "Use Cases"
+"Use Cases" -[#green,thickness=8]-> "Entities"
 
 @enduml

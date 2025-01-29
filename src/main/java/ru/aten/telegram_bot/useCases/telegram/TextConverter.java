@@ -20,6 +20,8 @@ public class TextConverter {
                 .replace("!", "\\!")
                 .replace("'", "\\'")
                 .replace("[", "\\[")
+                .replace("~", "\\~")
+                .replace("_", "\\_")
                 .replace("]", "\\]");
     }
 }
