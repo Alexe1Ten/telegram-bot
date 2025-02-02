@@ -23,7 +23,7 @@ public class TelegramTextHandler {
 
         var gptGeneratedText = chatGPTService.getResponseChatForUser(message.getChatId(), message.getText());
         String escapedText = TextConverter.escapeMarkdownV2(gptGeneratedText);
-        String messageText = String.format("[%s](tg://user?id=%d), %s", "*" + userName + "*", userId, escapedText);
+        String messageText = "[%s](tg://user?id=%d), %s".formatted("*" + userName + "*", userId, escapedText);
         SendMessage sendMessage = new SendMessage(message.getChatId().toString(), messageText);
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.enableMarkdownV2(true);

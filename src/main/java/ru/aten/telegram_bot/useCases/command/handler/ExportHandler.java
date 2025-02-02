@@ -2,14 +2,11 @@ package ru.aten.telegram_bot.useCases.command.handler;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.mail.MessagingException;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,6 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.aten.telegram_bot.entities.Displayable;
@@ -188,7 +186,7 @@ public class ExportHandler implements TelegramCommandHandler {
             emailService.sendEmailWithAttachmentAsync("aten9180929937@gmail.com", "subject", "Привет", file);
             
             return true;
-        } catch (RuntimeException | MessagingException | IOException e) {
+        } catch (RuntimeException | MessagingException e) {
             log.error("Не удалось отправить файл пользователю", e);
             return false;
         }

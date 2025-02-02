@@ -87,7 +87,7 @@ public class TelegramUpdateMessageHandler {
             for (User newMember : message.getNewChatMembers()) {
                 Long telegramId = newMember.getId();
                 String userName = newMember.getFirstName();
-                String messageText = String.format("[*%s*](tg://user?id=%d), Добро пожаловать\\!", userName, telegramId);
+                String messageText = "[*%s*](tg://user?id=%d), Добро пожаловать\\!".formatted(userName, telegramId);
 
                 SendMessage sendMessageBuilder = SendMessage.builder()
                         .chatId(chatId)

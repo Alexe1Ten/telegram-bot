@@ -60,7 +60,7 @@ public class ChatGptHistoryService {
     }
 
     public void createHistoryIfNotExist(Long userId) {
-        if (!chatHistoryRepository.findByUserId(userId).isPresent()) {
+        if (chatHistoryRepository.findByUserId(userId).isEmpty()) {
             createHistory(userId);
         }
     }
